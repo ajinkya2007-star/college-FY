@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>GreenTech</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --moss:#2F4A3C;
+    --moss-dark:#1C2E24;
+    --paper:#F1EDE2;
+    --paper-dim:#E6E0D0;
+    --clay:#B5652E;
+    --ink:#20241F;
+    --line:#C9C1AC;
+    color-scheme: light;
+  }
+  *{box-sizing:border-box;}
+  html,body{height:100%;}
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:'Inter',system-ui,sans-serif;
+    padding-top:env(safe-area-inset-top,0px);
+    padding-bottom:env(safe-area-inset-bottom,0px);
+  }
+  .app{
+    max-width:760px;
+    margin:0 auto;
+    padding:32px 20px 60px;
+  }
+  header{
+    border-bottom:2px solid var(--ink);
+    padding-bottom:18px;
+    margin-bottom:28px;
+    display:flex;
+    align-items:baseline;
+    justify-content:space-between;
+    gap:12px;
+    flex-wrap:wrap;
+  }
+  h1{
+    font-family:'Fraunces',serif;
+    font-optical-sizing:auto;
+    font-weight:700;
+    font-size:clamp(32px,6vw,44px);
+    margin:0;
+    letter-spacing:-0.01em;
+  }
+  header p{
+    margin:0;
+    font-size:14px;
+    color:#5b5c53;
+    max-width:220px;
+  }
+  nav{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:10px;
+    margin-bottom:28px;
+  }
+  @media(min-width:520px){ nav{grid-template-columns:repeat(4,1fr);} }
+  nav button{
+    font-family:'Inter',sans-serif;
+    font-weight:600;
+    font-size:13.5px;
+    padding:14px 10px;
+    background:var(--paper);
+    border:1.5px solid var(--ink);
+    color:var(--ink);
+    cursor:pointer;
+    text-align:left;
+    line-height:1.3;
+  }
+  nav button .num{
+    display:block;
+    font-family:'Fraunces',serif;
+    font-size:20px;
+    font-weight:600;
+    margin-bottom:4px;
+  }
+  nav button.active{
+    background:var(--moss);
+    border-color:var(--moss);
+    color:var(--paper);
+  }
+  nav button:hover:not(.active){
+    background:var(--paper-dim);
+  }
+  section.panel{
+    border:1.5px solid var(--ink);
+    padding:26px 24px;
+    background:#fff;
+    min-height:280px;
+  }
+  section.panel h2{
+    font-family:'Fraunces',serif;
+    font-weight:600;
+    font-size:24px;
+    margin:0 0 18px;
+  }
+  label{
+    display:block;
+    font-size:13px;
+    font-weight:600;
+    margin:16px 0 6px;
+  }
+  label:first-of-type{margin-top:0;}
+  input[type=text], input[type=number], select{
+    width:100%;
+    padding:10px 12px;
+    border:1.5px solid var(--line);
+    background:var(--paper);
+    font-family:'Inter',sans-serif;
+    font-size:15px;
+    color:var(--ink);
+  }
+  input:focus, select:focus, button:focus-visible{
+    outline:2px solid var(--clay);
+    outline-offset:1px;
+  }
+  .radio-row{display:flex; gap:18px; margin-top:4px;}
+  .radio-row label{
+    display:flex; align-items:center; gap:6px;
+    font-weight:500; font-size:14px; margin:0;
+  }
+  .radio-row input{width:auto;}
+  .submit-btn{
+    margin-top:22px;
+    background:var(--moss);
+    color:var(--paper);
+    border:none;
+    padding:12px 22px;
+    font-family:'Inter',sans-serif;
+    font-weight:600;
+    font-size:14px;
+    cursor:pointer;
+  }
+  .submit-btn:hover{background:var(--moss-dark);}
+  .result{
+    margin-top:22px;
+    padding:18px 20px;
+    background:var(--paper-dim);
+    border-left:4px solid var(--clay);
+    font-size:14.5px;
+    line-height:1.6;
+  }
+  .result h3{
+    font-family:'Fraunces',serif;
+    font-size:19px;
+    margin:0 0 6px;
+  }
+  .result dl{margin:12px 0 0;}
+  .result dt{font-weight:600; margin-top:10px;}
+  .result dd{margin:2px 0 0; color:#3b3c34;}
+  .result .rec{
+    font-family:'Fraunces',serif;
+    font-size:22px;
+    font-weight:600;
+    color:var(--moss-dark);
+  }
+  .note{font-size:12.5px; color:#6b6c60; margin-top:14px;}
+  ul.tips{margin:0; padding-left:20px;}
+  ul.tips li{margin-bottom:10px; font-size:15px; line-height:1.5;}
+  .error{color:var(--clay); font-weight:600; margin-top:14px; font-size:14px;}
+  footer{
+    text-align:center; font-size:12px; color:#8a8b7f; margin-top:24px;
+  }
+</style>
+</head>
+<body>
+<div class="app">
+  <header>
+    <h1>GreenTech</h1>
+    <p>Practical guidance for what to do with the devices you're done with.</p>
+  </header>
+
+  <nav id="nav">
+    <button data-panel="advisor" class="active"><span class="num">01</span>Device Advisor</button>
+    <button data-panel="info"><span class="num">02</span>E&#8209;Waste Info</button>
+    <button data-panel="cleanup"><span class="num">03</span>Digital Cleanup</button>
+    <button data-panel="green"><span class="num">04</span>Green Computing</button>
+  </nav>
+
+  <section class="panel" id="panel-advisor">
+    <h2>Device Advisor</h2>
+    <label for="dv-name">Device name</label>
+    <input type="text" id="dv-name" placeholder="e.g. Galaxy S21">
+    <label for="dv-age">Years used</label>
+    <input type="number" id="dv-age" min="0" step="1" placeholder="e.g. 4">
+    <label>Is the device working properly?</label>
+    <div class="radio-row">
+      <label><input type="radio" name="dv-working" value="yes" checked> Yes</label>
+      <label><input type="radio" name="dv-working" value="no"> No</label>
+    </div>
+    <label>Does it have a major problem?</label>
+    <div class="radio-row">
+      <label><input type="radio" name="dv-major" value="no" checked> No</label>
+      <label><input type="radio" name="dv-major" value="yes"> Yes</label>
+    </div>
+    <button class="submit-btn" onclick="runAdvisor()">Get recommendation</button>
+    <div id="advisor-result"></div>
+  </section>
+
+  <section class="panel" id="panel-info" style="display:none">
+    <h2>E-Waste Information</h2>
+    <label for="ew-brand">Brand</label>
+    <select id="ew-brand" onchange="populateSeries()">
+      <option value="">Select a brand&hellip;</option>
+    </select>
+    <label for="ew-series">Series</label>
+    <select id="ew-series">
+      <option value="">Select a series&hellip;</option>
+    </select>
+    <button class="submit-btn" onclick="runInfo()">Show information</button>
+    <div id="info-result"></div>
+  </section>
+
+  <section class="panel" id="panel-cleanup" style="display:none">
+    <h2>Digital Cleanup Tips</h2>
+    <ul class="tips" id="cleanup-list"></ul>
+  </section>
+
+  <section class="panel" id="panel-green" style="display:none">
+    <h2>Green Computing Tips</h2>
+    <ul class="tips" id="green-list"></ul>
+  </section>
+
+  <footer>GreenTech &mdash; general guidance only, not a substitute for professional inspection.</footer>
+</div>
+
+<script>
+const eWasteData = {
+  samsung: {
+    s: { common_issues:"Battery degradation, screen damage, and software issues.", repair_advice:"Visit an authorized service center for battery or screen replacement.", reuse_donation:"Use the device as a media player or donate it if working.", recycling:"Give the device to an authorized e-waste recycler.", safety:"Do not use a swollen battery or damaged charger.", data_wiping:"Back up data and perform a factory reset before disposal.", environmental_impact:"Improper disposal can release harmful materials and waste valuable resources.", resale:"Estimated resale depends on model, age, condition, and battery health." },
+    a: { common_issues:"Battery wear, charging problems, and screen damage.", repair_advice:"Check the charger and consult a service professional for repairs.", reuse_donation:"Use it for learning, music, or donate it to someone in need.", recycling:"Recycle through an authorized e-waste collection center.", safety:"Avoid damaged batteries and unofficial repairs.", data_wiping:"Back up important files and factory reset the phone.", environmental_impact:"Recycling helps recover materials and reduce electronic waste.", resale:"Resale value depends on condition, storage, and market demand." },
+    m: { common_issues:"Battery aging, charging issues, and software slowdown.", repair_advice:"Get the battery or charging port inspected by a professional.", reuse_donation:"Reuse the device for basic tasks or donate it if functional.", recycling:"Send the device to a certified e-waste recycler.", safety:"Do not use a swollen battery.", data_wiping:"Back up data and perform a factory reset.", environmental_impact:"Responsible recycling reduces e-waste and resource loss.", resale:"Estimated resale depends on age, condition, and demand." }
+  },
+  apple: {
+    iphone: { common_issues:"Battery health reduction, screen damage, and charging issues.", repair_advice:"Contact Apple or an authorized service provider.", reuse_donation:"Reuse as a camera, music player, or donate if working.", recycling:"Use an authorized Apple or e-waste recycling program.", safety:"Avoid using a damaged or swollen battery.", data_wiping:"Back up data, sign out of accounts, and erase all content.", environmental_impact:"Recycling helps recover valuable materials and reduce electronic waste.", resale:"Value depends on model, storage, battery health, and condition." },
+    ipad: { common_issues:"Battery aging, screen damage, charging problems, and software issues.", repair_advice:"Contact Apple or an authorized service provider for repair.", reuse_donation:"Reuse it for studying, reading, media, or donate it if working.", recycling:"Send the iPad to an authorized Apple or e-waste recycling program.", safety:"Do not use the device if the battery is swollen or physically damaged.", data_wiping:"Back up important data, sign out of Apple ID, and erase all content.", environmental_impact:"Responsible recycling helps recover materials and reduces electronic waste.", resale:"Value depends on model, storage, age, condition, and battery health." },
+    macbook: { common_issues:"Battery aging, keyboard or trackpad problems, screen damage, and software issues.", repair_advice:"Contact Apple or an authorized service provider for inspection and repair.", reuse_donation:"Continue using it for learning or office work, or donate it if functional.", recycling:"Recycle through an authorized Apple or e-waste recycling program.", safety:"Avoid using a damaged battery or damaged charging equipment.", data_wiping:"Back up files, sign out of accounts, and erase the Mac before disposal.", environmental_impact:"Proper recycling helps recover useful materials and reduces electronic waste.", resale:"Value depends on model, year, storage, condition, and battery health." },
+    watch: { common_issues:"Battery aging, screen damage, charging problems, and software issues.", repair_advice:"Contact Apple or an authorized service provider for assistance.", reuse_donation:"Continue using it for fitness or notifications, or donate it if working.", recycling:"Use an authorized Apple or e-waste recycling program.", safety:"Do not use the device if the battery is swollen or physically damaged.", data_wiping:"Back up required data, unpair the watch, and erase its content.", environmental_impact:"Responsible recycling helps recover materials and reduce electronic waste.", resale:"Value depends on model, age, condition, battery health, and demand." }
+  },
+  oppo: {
+    reno: { common_issues:"Battery wear, screen damage, and charging problems.", repair_advice:"Visit an authorized OPPO service center.", reuse_donation:"Use the phone for learning or donate it if functional.", recycling:"Recycle through an authorized e-waste collection center.", safety:"Do not use damaged batteries or chargers.", data_wiping:"Back up data and perform a factory reset.", environmental_impact:"Proper recycling helps reduce environmental pollution.", resale:"Resale depends on model, age, condition, and demand." }
+  },
+  oneplus: {
+    oneplus: { common_issues:"Battery degradation, screen damage, and software problems.", repair_advice:"Contact an authorized OnePlus service center.", reuse_donation:"Reuse for entertainment or donate if working.", recycling:"Send the device to an authorized recycler.", safety:"Avoid using damaged batteries and chargers.", data_wiping:"Back up files and perform a factory reset.", environmental_impact:"Responsible recycling reduces electronic waste and resource loss.", resale:"Estimated resale depends on condition, storage, and market demand." }
+  },
+  xiaomi: {
+    redmi: { common_issues:"Battery aging, charging problems, and screen damage.", repair_advice:"Visit an authorized Xiaomi service center.", reuse_donation:"Reuse for basic tasks or donate the device.", recycling:"Recycle through an authorized e-waste recycler.", safety:"Do not use a swollen battery or damaged charger.", data_wiping:"Back up data and perform a factory reset.", environmental_impact:"Recycling helps conserve resources and reduce e-waste.", resale:"Resale depends on model, age, condition, and market demand." }
+  }
+};
+
+const cleanupTips = ["Delete unnecessary downloads.","Remove duplicate files.","Organise files into folders.","Delete unwanted emails."];
+const greenTips = ["Repair devices before replacing them.","Donate working electronics.","Switch off devices when not needed.","Use energy-saving settings.","Recycle e-waste responsibly."];
+
+function titleCase(s){ return s.charAt(0).toUpperCase()+s.slice(1); }
+
+// Nav switching
+document.getElementById('nav').addEventListener('click', e=>{
+  const btn = e.target.closest('button[data-panel]');
+  if(!btn) return;
+  document.querySelectorAll('#nav button').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('section.panel').forEach(p=>p.style.display='none');
+  document.getElementById('panel-'+btn.dataset.panel).style.display='block';
+});
+
+function runAdvisor(){
+  const nameEl = document.getElementById('dv-name');
+  const ageEl = document.getElementById('dv-age');
+  const out = document.getElementById('advisor-result');
+  const name = nameEl.value.trim() || "Device";
+  const ageRaw = ageEl.value;
+  if(ageRaw === "" || isNaN(ageRaw) || Number(ageRaw) < 0){
+    out.innerHTML = '<p class="error">Enter a valid number of years used.</p>';
+    return;
+  }
+  const age = Number(ageRaw);
+  const working = document.querySelector('input[name=dv-working]:checked').value;
+  const majorProblem = document.querySelector('input[name=dv-major]:checked').value;
+
+  let recommendation;
+  if(working === "yes" && majorProblem === "no"){
+    recommendation = age <= 5 ? "Continue using" : "Reuse (consider donating or repurposing)";
+  } else if(working === "no" && majorProblem === "no"){
+    recommendation = "Repair";
+  } else if(majorProblem === "yes"){
+    recommendation = age <= 3 ? "Repair" : "Recycle";
+  } else {
+    recommendation = "Recycle";
+  }
+
+  out.innerHTML = `
+    <div class="result">
+      <h3>${name}</h3>
+      <p>Age: ${age} year${age===1?'':'s'}</p>
+      <p class="rec">${recommendation}</p>
+      <p class="note">This is general guidance based on fixed rules only. It cannot identify the exact technical fault without professional inspection.</p>
+    </div>`;
+}
+
+const brandSelect = document.getElementById('ew-brand');
+Object.keys(eWasteData).forEach(brand=>{
+  const opt = document.createElement('option');
+  opt.value = brand;
+  opt.textContent = titleCase(brand);
+  brandSelect.appendChild(opt);
+});
+
+function populateSeries(){
+  const seriesSelect = document.getElementById('ew-series');
+  seriesSelect.innerHTML = '<option value="">Select a series&hellip;</option>';
+  const brand = brandSelect.value;
+  if(brand && eWasteData[brand]){
+    Object.keys(eWasteData[brand]).forEach(series=>{
+      const opt = document.createElement('option');
+      opt.value = series;
+      opt.textContent = titleCase(series);
+      seriesSelect.appendChild(opt);
+    });
+  }
+  document.getElementById('info-result').innerHTML = '';
+}
+
+function runInfo(){
+  const brand = brandSelect.value;
+  const series = document.getElementById('ew-series').value;
+  const out = document.getElementById('info-result');
+  if(!brand || !series){
+    out.innerHTML = '<p class="error">Choose both a brand and a series.</p>';
+    return;
+  }
+  const d = eWasteData[brand][series];
+  const rows = [
+    ["Common Issues", d.common_issues],
+    ["Repair Advice", d.repair_advice],
+    ["Reuse / Donation", d.reuse_donation],
+    ["Recycling Advice", d.recycling],
+    ["Safety Precautions", d.safety],
+    ["Data Wiping", d.data_wiping],
+    ["Environmental Impact", d.environmental_impact],
+    ["Estimated Resale", d.resale]
+  ];
+  out.innerHTML = `
+    <div class="result">
+      <h3>${titleCase(brand)} &mdash; ${titleCase(series)}</h3>
+      <dl>${rows.map(([k,v])=>`<dt>${k}</dt><dd>${v}</dd>`).join('')}</dl>
+    </div>`;
+}
+
+document.getElementById('cleanup-list').innerHTML = cleanupTips.map(t=>`<li>${t}</li>`).join('');
+document.getElementById('green-list').innerHTML = greenTips.map(t=>`<li>${t}</li>`).join('');
+</script>
+</body>
+</html>
